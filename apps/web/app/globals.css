@@ -1,0 +1,88 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+  --color-navy: #040918;
+  --color-cyan: #2ee9ff;
+}
+
+.font-display {
+  font-family: var(--font-sora), ui-sans-serif, system-ui, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  overflow-x: hidden;
+  background:
+    radial-gradient(900px 520px at 78% 18%, rgba(92, 54, 255, 0.22), transparent 62%),
+    radial-gradient(680px 420px at 12% 8%, rgba(0, 170, 255, 0.12), transparent 58%),
+    #040918;
+  color: #e8eefc;
+}
+
+body::before {
+  content: "";
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background-image:
+    linear-gradient(rgba(140, 180, 255, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(140, 180, 255, 0.045) 1px, transparent 1px);
+  background-size: 72px 72px;
+  mask-image: radial-gradient(circle at 50% 20%, black, transparent 78%);
+}
+
+body > * {
+  position: relative;
+  z-index: 1;
+}
+
+::selection {
+  background: rgba(46, 233, 255, 0.28);
+  color: white;
+}
+
+@keyframes float-y {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes spin-slow {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.float-slow {
+  animation: float-y 6.5s ease-in-out infinite;
+}
+
+.float-delayed {
+  animation: float-y 7.5s ease-in-out 0.8s infinite;
+}
+
+.spin-slow {
+  animation: spin-slow 42s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .float-slow,
+  .float-delayed,
+  .spin-slow {
+    animation: none;
+  }
+}

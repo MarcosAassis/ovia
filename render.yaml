@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: ovia-api
+    runtime: docker
+    dockerfilePath: ./apps/api/Dockerfile
+    dockerContext: ./apps/api
+    healthCheckPath: /health
+    envVars:
+      - key: CORS_ORIGINS
+        value: http://localhost:3000
+      - key: DATABASE_PATH
+        value: /tmp/ovia.db
+      - key: API_KEY
+        sync: false

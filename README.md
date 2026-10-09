@@ -7,7 +7,7 @@ apps/web   Next.js — publicado na Vercel
 apps/api   FastAPI — imagem Docker publicada no Render
 ```
 
-O formulário de contato envia para `/api/contact` no Next.js. Essa rota encaminha o pedido para a API Python. A chave, quando existir, fica só no servidor.
+O formulário de contato envia para `/api/contact` no Next.js. Essa rota encaminha o pedido para a API Python, que grava o contato e dispara um e-mail pelo Resend para `oviatechsolutions@gmail.com`. A chave da API, quando existir, fica só no servidor.
 
 ## Local
 
@@ -51,6 +51,6 @@ O arquivo `render.yaml` descreve o serviço Docker. Na criação do serviço, ap
 
 Defina `API_KEY` com um valor longo e aleatório. Sem essa variável, a API aceita contatos sem chave — útil na máquina local, inadequado em produção.
 
-`DATABASE_PATH` aponta para um SQLite. No plano sem disco persistente, os contatos se perdem quando o serviço reinicia. Para guardar de verdade, troque depois por Postgres no Render.
+Defina também `RESEND_API_KEY` com a chave do Resend. O destino padrão é `CONTACT_TO_EMAIL=oviatechsolutions@gmail.com`. Com conta nova, o remetente pode ser `OVIA Tech <onboarding@resend.dev>`; depois de verificar o domínio, troque `CONTACT_FROM_EMAIL`.
 
-O e-mail exibido no site fica em `apps/web/content/site.ts`.
+`DATABASE_PATH` aponta para um SQLite. No plano sem disco persistente, os contatos se perdem quando o serviço reinicia. Para guardar de verdade, troque depois por Postgres no Render.

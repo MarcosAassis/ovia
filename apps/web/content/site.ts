@@ -1,11 +1,23 @@
 export const site = {
   name: "OVIA Tech",
-  email: "contato@ovia.tech",
   // WhatsApp da empresa, com DDI e DDD, só números. Exemplo: 5511987654321
   whatsappNumber: "5531991738659",
+  instagram: "ovia.tech",
   description:
     "Consultoria de TI, Inteligência Artificial e relatórios empresariais para acelerar resultados e simplificar a gestão.",
 };
+
+export function instagramUrl() {
+  return `https://instagram.com/${site.instagram}`;
+}
+
+export function instagramLink() {
+  return {
+    href: instagramUrl(),
+    target: "_blank" as const,
+    rel: "noopener noreferrer" as const,
+  };
+}
 
 const whatsappMessage = "Olá, vim pelo site da OVIA Tech e quero falar com um especialista.";
 
@@ -41,6 +53,13 @@ export const interests = [
 ] as const;
 
 export type Interest = (typeof interests)[number]["value"];
+
+export const contactPreferences = [
+  { value: "email", label: "E-mail" },
+  { value: "whatsapp", label: "WhatsApp" },
+] as const;
+
+export type ContactPreference = (typeof contactPreferences)[number]["value"];
 
 export const solutions = [
   {

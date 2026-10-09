@@ -1,15 +1,20 @@
 import logging
 import os
 from contextlib import asynccontextmanager
+from pathlib import Path
 
 import sqlite3
+from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from app.db import init_db, insert_contact
+from app.mail import send_contact_email
 from app.schemas import ContactCreate, ContactResponse, HealthResponse
+
+load_dotenv(Path(__file__).resolve().parents[1] / ".env", override=True)
 
 logger = logging.getLogger("ovia")
 
@@ -72,8 +77,10 @@ def create_contact(payload: ContactCreate, request: Request) -> ContactResponse:
         contact_id = insert_contact(
             name=payload.name,
             email=str(payload.email),
+            phone=payload.phone,
             company=payload.company,
             interest=payload.interest,
+            contact_preference=payload.contact_preference,
             message=payload.message,
         )
     except sqlite3.Error:
@@ -81,6 +88,15 @@ def create_contact(payload: ContactCreate, request: Request) -> ContactResponse:
         raise HTTPException(
             status_code=500,
             detail="Não foi possível registrar sua mensagem.",
+        ) from None
+
+    try:
+        send_contact_email(payload)
+    except Exception:
+        logger.exception("falha ao enviar e-mail de contato id=%s", contact_id)
+        raise HTTPException(
+            status_code=502,
+            detail="Não foi possível enviar sua mensagem agora. Tente novamente em instantes.",
         ) from None
 
     logger.info("contato registrado id=%s", contact_id)

@@ -1,5 +1,6 @@
 import { Logo } from "@/components/Logo";
-import { nav, site } from "@/content/site";
+import { InstagramIcon } from "@/components/icons";
+import { instagramLink, nav, site } from "@/content/site";
 
 export function Footer() {
   return (
@@ -13,7 +14,19 @@ export function Footer() {
             </a>
           ))}
         </nav>
-        <p className="text-sm text-slate-500">© {new Date().getFullYear()} {site.name}</p>
+        <div className="flex flex-col gap-3 sm:items-end">
+          <a
+            {...instagramLink()}
+            className="inline-flex items-center gap-2 text-sm text-slate-400 transition hover:text-cyan-200"
+            aria-label={`Instagram @${site.instagram}`}
+          >
+            <InstagramIcon className="h-4 w-4" />
+            @{site.instagram}
+          </a>
+          <p className="text-sm text-slate-500">
+            © {new Date().getFullYear()} {site.name}
+          </p>
+        </div>
       </div>
     </footer>
   );

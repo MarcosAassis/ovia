@@ -1,9 +1,18 @@
 "use client";
 
 import { FormEvent, useEffect, useState } from "react";
-import { WhatsAppIcon } from "@/components/icons";
+import { InstagramIcon, WhatsAppIcon } from "@/components/icons";
 import { useSearchParams } from "next/navigation";
-import { interests, site, whatsappLink, whatsappUrl, type Interest } from "@/content/site";
+import {
+  contactPreferences,
+  instagramLink,
+  interests,
+  site,
+  whatsappLink,
+  whatsappUrl,
+  type ContactPreference,
+  type Interest,
+} from "@/content/site";
 
 type Status = "idle" | "sending" | "success" | "error";
 
@@ -14,6 +23,7 @@ export function Contact() {
   const params = useSearchParams();
   const preset = params.get("interesse");
   const [interest, setInterest] = useState<Interest>("geral");
+  const [preference, setPreference] = useState<ContactPreference>("email");
   const [status, setStatus] = useState<Status>("idle");
   const [feedback, setFeedback] = useState("");
 
@@ -30,8 +40,10 @@ export function Contact() {
     const payload = {
       name: String(data.get("name") ?? ""),
       email: String(data.get("email") ?? ""),
+      phone: String(data.get("phone") ?? ""),
       company: String(data.get("company") ?? ""),
       interest,
+      contact_preference: preference,
       message: String(data.get("message") ?? ""),
       website: String(data.get("website") ?? ""),
     };
@@ -62,6 +74,7 @@ export function Contact() {
       setFeedback(body?.detail ?? "Mensagem recebida. Em breve um especialista entra em contato.");
       form.reset();
       setInterest("geral");
+      setPreference("email");
     } catch {
       setStatus("error");
       setFeedback("Não foi possível enviar agora. Tente novamente em instantes.");
@@ -90,8 +103,12 @@ export function Contact() {
                 Chamar no WhatsApp
               </a>
             ) : null}
-            <a href={`mailto:${site.email}`} className="text-sm text-cyan-200 hover:text-white">
-              {site.email}
+            <a
+              {...instagramLink()}
+              className="inline-flex items-center gap-2 text-sm text-cyan-200 transition hover:text-white"
+            >
+              <InstagramIcon className="h-4 w-4" />
+              @{site.instagram}
             </a>
           </div>
         </div>
@@ -129,25 +146,65 @@ export function Contact() {
                   <input name="email" type="email" autoComplete="email" className={inputClass} placeholder="voce@empresa.com" />
                 </label>
                 <label className="grid gap-2 text-sm text-slate-300">
-                  Empresa
-                  <input name="company" autoComplete="organization" className={inputClass} placeholder="Opcional" />
+                  Telefone
+                  <input
+                    name="phone"
+                    type="tel"
+                    autoComplete="tel"
+                    className={inputClass}
+                    placeholder="(31) 99999-9999"
+                  />
                 </label>
               </div>
               <label className="grid gap-2 text-sm text-slate-300">
-                Interesse
-                <select
-                  name="interest"
-                  value={interest}
-                  onChange={(event) => setInterest(event.target.value as Interest)}
-                  className={inputClass}
-                >
-                  {interests.map((item) => (
-                    <option key={item.value} value={item.value} className="bg-[#071022]">
-                      {item.label}
-                    </option>
-                  ))}
-                </select>
+                Empresa
+                <input name="company" autoComplete="organization" className={inputClass} placeholder="Opcional" />
               </label>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <label className="grid gap-2 text-sm text-slate-300">
+                  Interesse
+                  <select
+                    name="interest"
+                    value={interest}
+                    onChange={(event) => setInterest(event.target.value as Interest)}
+                    className={inputClass}
+                  >
+                    {interests.map((item) => (
+                      <option key={item.value} value={item.value} className="bg-[#071022]">
+                        {item.label}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <fieldset className="grid gap-2 text-sm text-slate-300">
+                  <legend>Preferência de contato</legend>
+                  <div className="grid grid-cols-2 gap-2">
+                    {contactPreferences.map((item) => {
+                      const selected = preference === item.value;
+                      return (
+                        <label
+                          key={item.value}
+                          className={`flex cursor-pointer items-center justify-center rounded-xl border px-3 py-3 text-sm font-medium transition ${
+                            selected
+                              ? "border-cyan-300/70 bg-cyan-300/10 text-cyan-100"
+                              : "border-white/10 bg-white/[0.04] text-slate-300 hover:border-white/20"
+                          }`}
+                        >
+                          <input
+                            type="radio"
+                            name="contact_preference"
+                            value={item.value}
+                            checked={selected}
+                            onChange={() => setPreference(item.value)}
+                            className="sr-only"
+                          />
+                          {item.label}
+                        </label>
+                      );
+                    })}
+                  </div>
+                </fieldset>
+              </div>
               <label className="grid gap-2 text-sm text-slate-300">
                 Mensagem
                 <textarea name="message" rows={5} className={inputClass} placeholder="O que você quer resolver?" />
@@ -178,9 +235,17 @@ export function Contact() {
   );
 }
 
-function validate(payload: { name: string; email: string; message: string }) {
+function validate(payload: {
+  name: string;
+  email: string;
+  phone: string;
+  contact_preference: ContactPreference;
+  message: string;
+}) {
   if (payload.name.trim().length < 2) return "Informe seu nome.";
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(payload.email.trim())) return "Informe um e-mail válido.";
+  const digits = payload.phone.replace(/\D/g, "");
+  if (digits.length < 10) return "Informe um telefone válido com DDD.";
   if (payload.message.trim().length < 10) return "A mensagem precisa ter pelo menos 10 caracteres.";
   return null;
 }

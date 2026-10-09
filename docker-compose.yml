@@ -7,6 +7,9 @@ services:
       PORT: "8000"
       CORS_ORIGINS: "http://localhost:3000"
       DATABASE_PATH: "/data/ovia.db"
+      RESEND_API_KEY: "${RESEND_API_KEY:-}"
+      CONTACT_TO_EMAIL: "${CONTACT_TO_EMAIL:-oviatechsolutions@gmail.com}"
+      CONTACT_FROM_EMAIL: "${CONTACT_FROM_EMAIL:-OVIA Tech <onboarding@resend.dev>}"
     volumes:
       - api-data:/data
     healthcheck:

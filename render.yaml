@@ -12,3 +12,9 @@ services:
         value: /tmp/ovia.db
       - key: API_KEY
         sync: false
+      - key: RESEND_API_KEY
+        sync: false
+      - key: CONTACT_TO_EMAIL
+        value: oviatechsolutions@gmail.com
+      - key: CONTACT_FROM_EMAIL
+        value: OVIA Tech <onboarding@resend.dev>
